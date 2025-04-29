@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Party</title>
+</head>
+<body>
+<h1>Watch Party</h1>
+<video id="video" width="600" controls>
+    <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+
+<!-- Include Socket.io from CDN -->
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<script>
+    const socket = io("http://localhost:3000");
+    let isHost = false;  // Flag to track if the current client is the host
+
+    socket.on("connect", () => {
+        console.log("Connected:", socket.id);
+        socket.emit("join-room", "party123");  // Join the room
+    });
+
+    socket.on("joined-room", (data) => {
+        console.log("Room joined:", data);
+
+        isHost = data.isHost;  // Set whether the current client is the host
+        console.log(isHost ? "You are the host!" : "You are a viewer.");
+
+        const video = document.getElementById("video");
+
+        // Only add listeners if the client is the host
+        if (isHost) {
+            // Add event listeners to control play/pause/seek on the host
+            video.addEventListener("play", () => {
+                console.log("Host: Play at", video.currentTime);
+                socket.emit("play", "party123", video.currentTime);
+            });
+
+            video.addEventListener("pause", () => {
+                console.log("Host: Pause at", video.currentTime);
+                socket.emit("pause", "party123", video.currentTime);
+            });
+
+            video.addEventListener("seeked", () => {
+                console.log("Host: Seek to", video.currentTime);
+                socket.emit("seek", "party123", video.currentTime);
+            });
+        }
+    });
+
+    socket.on("play", (time) => {
+        console.log("🔊 Play at", time);
+        const video = document.getElementById("video");
+        video.currentTime = time;
+        video.play().then(console.log("played"));
+    });
+
+    socket.on("pause", (time) => {
+        console.log("⏸️ Pause at", time);
+        const video = document.getElementById("video");
+        video.currentTime = time;
+        video.pause();
+    });
+
+    socket.on("seek", (time) => {
+        console.log("⏩ Seek to", time);
+        const video = document.getElementById("video");
+        video.currentTime = time;
+    });
+</script>
+</body>
+</html>
