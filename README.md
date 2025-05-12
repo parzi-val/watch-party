@@ -16,7 +16,7 @@ The Watch Party Sync application allows users to join a shared room to watch vid
 - **Basic Backend**: Set up a real-time server using **Express** and **Socket.IO**.
 - **Room Management**: Implemented room-based architecture where users can join rooms and the host controls the sync.
 - **Video Sync**: Implemented the ability to synchronize play, pause, and seek actions across multiple clients in the same room.
-- **Frontend Integration**: Integrated real-time socket events with HTML5 `<video>` controls for synchronization.
+- **Frontend Integration**: Integrated real-time socket events with HTML5 `<video>` controls for synchronizations.
 
 ### Pending:
 - [ ] **Error Handling**: Improve error handling for disconnected clients or failed connections.
